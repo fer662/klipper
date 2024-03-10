@@ -52,6 +52,7 @@ class QuadGantryLevel:
         self.retry_helper.start(gcmd)
         self.probe_helper.start_probe(gcmd)
     def probe_finalize(self, offsets, positions):
+        logging.info('probe_finalize')
         # Mirror our perspective so the adjustments make sense
         # from the perspective of the gantry
         z_positions = [self.horizontal_move_z - p[2] for p in positions]
@@ -109,6 +110,9 @@ class QuadGantryLevel:
 
         speed = self.probe_helper.get_lift_speed()
         self.z_helper.adjust_steppers(z_adjust, speed)
+
+        logging.info("previous: %s"
+                     % (self.retry_helper.previous))
         return self.z_status.check_retry_result(
             self.retry_helper.check_retry(z_positions))
 
