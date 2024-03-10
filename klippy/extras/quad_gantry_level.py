@@ -35,8 +35,12 @@ class QuadGantryLevel:
                 "Need exactly 4 probe points for quad_gantry_level")
         self.z_status = z_tilt.ZAdjustStatus(self.printer)
         self.z_helper = z_tilt.ZAdjustHelper(config, 4)
+        
+        self.horizontal_move_z_fine = config.getfloat("horizontal_move_z_fine", self.horizontal_move_z)
+        self.fine_adjustment_threshold = config.getfloat("fine_adjustment_threshold", 0)
         self.gantry_corners = config.getlists('gantry_corners', parser=float,
                                               seps=(',', '\n'), count=2)
+                                              
         if len(self.gantry_corners) < 2:
             raise config.error(
                 "quad_gantry_level requires at least two gantry_corners")
@@ -114,6 +118,9 @@ class QuadGantryLevel:
         retry_result = self.retry_helper.check_retry(z_positions)
         self.gcode.respond_info("current error: %0.6f"
                      % (self.retry_helper.error))
+        if self.retry_helper_error < self.fine_adjustment_threshold:
+            self.horizontal_move_z = self.horizontal_move_z_fine
+            
         return self.z_status.check_retry_result(retry_result)
 
     def linefit(self,p1,p2):
