@@ -111,10 +111,10 @@ class QuadGantryLevel:
         speed = self.probe_helper.get_lift_speed()
         self.z_helper.adjust_steppers(z_adjust, speed)
 
-        self.gcode.respond_info("previous: %s"
-                     % (self.retry_helper.previous))
-        return self.z_status.check_retry_result(
-            self.retry_helper.check_retry(z_positions))
+        retry_result = self.retry_helper.check_retry(z_positions)
+        self.gcode.respond_info("current error: %0.6f"
+                     % (self.retry_helper.error))
+        return self.z_status.check_retry_result(retry_result)
 
     def linefit(self,p1,p2):
         if p1[1] == p2[1]:

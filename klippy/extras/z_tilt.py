@@ -109,15 +109,15 @@ class RetryHelper:
     def check_retry(self, z_positions):
         if self.max_retries == 0:
             return
-        error = round(max(z_positions) - min(z_positions),6)
+        self.error = round(max(z_positions) - min(z_positions),6)
         self.gcode.respond_info(
             "Retries: %d/%d %s: %0.6f tolerance: %0.6f" % (
                 self.current_retry, self.max_retries, self.value_label,
-                error, self.retry_tolerance))
-        if self.check_increase(error):
+                self.error, self.retry_tolerance))
+        if self.check_increase(self.error):
             raise self.gcode.error("Retries aborting: %s is increasing. %s"
                                    % (self.value_label, self.error_msg_extra))
-        if error <= self.retry_tolerance:
+        if self.error <= self.retry_tolerance:
             return "done"
         self.current_retry += 1
         if self.current_retry > self.max_retries:
