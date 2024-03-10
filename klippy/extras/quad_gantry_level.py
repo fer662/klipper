@@ -118,7 +118,7 @@ class QuadGantryLevel:
         retry_result = self.retry_helper.check_retry(z_positions)
         self.gcode.respond_info("current error: %0.6f"
                      % (self.retry_helper.error))
-        if self.retry_helper_error < self.fine_adjustment_threshold:
+        if self.retry_helper.error < self.fine_adjustment_threshold:
             self.horizontal_move_z = self.horizontal_move_z_fine
             
         return self.z_status.check_retry_result(retry_result)
